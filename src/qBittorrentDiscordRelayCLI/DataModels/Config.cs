@@ -2,5 +2,10 @@
 
 internal class Config
 {
-    public string WebhookUrl { get; set; } = "";
+	public Config(string webhookUrl)
+	{
+		WebhookUrl = webhookUrl;
+	}
+
+    public string WebhookUrl { get; set; }
 }
