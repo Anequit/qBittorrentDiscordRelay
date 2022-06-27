@@ -15,21 +15,23 @@ internal class Program
     private static async Task Main(string[] args)
     {
         if(args.Length < 1)
-            Environment.Exit(11);
-
-        if(!File.Exists("config.json"))
         {
-            await File.AppendAllTextAsync("config.json", JsonSerializer.Serialize(new Config(), typeof(Config), new JsonSerializerOptions()
+            Console.Write("Webhook URL: ");
+            string? url = Console.ReadLine();
+
+            if(url is null)
+                Environment.Exit(87);
+
+            if(File.Exists("config.json"))
+                File.Delete("config.json");
+
+            await File.AppendAllTextAsync("config.json", JsonSerializer.Serialize(new Config(url), typeof(Config), new JsonSerializerOptions()
             {
                 WriteIndented = true
             }));
 
-            Process.Start(new ProcessStartInfo()
-            {
-                UseShellExecute = true,
-                FileName = "config.json"
-            });
-        }
+            Environment.Exit(0);
+        }    
 
         using(FileStream stream = new FileStream("config.json", FileMode.Open, FileAccess.Read))
         {
