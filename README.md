@@ -9,7 +9,7 @@ This program will send a message to a discord server whenever a torrent finishes
 ### Setup Guide
 1. Download and run the latest version [here](https://github.com/Anequit/qBittorrentDiscordRelay/releases/latest).
  
-2. Copy your webhook url from discord and paste it into the program. If you don't know how to get your webhook url then you can follow this guide [here](https://wiki.communitydata.science/Windows_terminal_navigation).
+2. Copy your webhook url from discord and paste it into the program. If you don't know how to get your webhook url then you can follow this guide [here](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks).
 
 3. Check your discord for the test message, if you didn't get it, then your url might be wrong. 
 
