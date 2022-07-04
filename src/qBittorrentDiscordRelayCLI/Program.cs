@@ -1,10 +1,7 @@
 ﻿using qBittorrentDiscordRelayCLI.DataModels;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
-using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -14,39 +11,66 @@ internal class Program
 {
     private static async Task Main(string[] args)
     {
-        if(args.Length < 1)
+        if(args.Length > 1)
+            Environment.Exit(160);
+
+        HttpClient client = new HttpClient();
+
+        string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "qBittorrentDiscordRelay");
+
+        if(!Directory.Exists(path))
+            Directory.CreateDirectory(path);
+
+        path = Path.Combine(path, "config.json");
+
+        if(File.Exists(path))
         {
-            Console.Write("Webhook URL: ");
-            string? url = Console.ReadLine();
-
-            if(url is null)
-                Environment.Exit(87);
-
-            if(File.Exists("config.json"))
-                File.Delete("config.json");
-
-            await File.AppendAllTextAsync("config.json", JsonSerializer.Serialize(new Config(url), typeof(Config), new JsonSerializerOptions()
+            if(args.Length == 1)
             {
-                WriteIndented = true
-            }));
-
-            Environment.Exit(0);
-        }    
-
-        using(FileStream stream = new FileStream("config.json", FileMode.Open, FileAccess.Read))
-        {
-            Config? config = await JsonSerializer.DeserializeAsync<Config>(stream);
-
-            if(config is null)
-                Environment.Exit(13);
-
-            using(HttpClient client = new HttpClient())
-            {
-                await client.PostAsJsonAsync(config.WebhookUrl, new Dictionary<string, string>()
+                using(FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read))
                 {
-                    { "content", $"{args[0]} has finished downloading." }
-                });
+                    Config? config = await JsonSerializer.DeserializeAsync<Config>(stream);
+
+                    if(config is null)
+                        Environment.Exit(13);
+
+                    await client.MessageWebhookAsync(config.WebhookUrl, args[0]);
+                    Environment.Exit(0);
+                }
             }
+        }
+
+        string url = await GetWebhookURLAsync(client);
+
+        if(File.Exists(path))
+            File.Delete(path);
+
+        await File.AppendAllTextAsync(path, JsonSerializer.Serialize(new Config(url), typeof(Config)));
+
+        Console.Write("\nPress any key to close...");
+        Console.ReadKey();
+        Environment.Exit(0);
+    }
+
+    private static async Task<string> GetWebhookURLAsync(HttpClient client)
+    {
+        while(true)
+        {
+            Console.Clear();
+
+            Console.WriteLine("[1/2] Paste in your discord webhook url below, then press enter to confirm it. \n");
+            Console.Write("Webhook URL: ");
+            string url = Console.ReadLine() ?? "";
+
+            // Send test message
+            await client.MessageWebhookAsync(url, "If you receive this message, then your relay is configured correctly.");
+
+            Console.Clear();
+            Console.Write("[2/2] Did you receive the test message? (Y/n) ");
+            string answer = Console.ReadLine() ?? "Y";
+
+            if(answer.ToUpper() == "Y" || answer == "")
+                return url;
         }
     }
 }
