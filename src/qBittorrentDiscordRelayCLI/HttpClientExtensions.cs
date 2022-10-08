@@ -12,7 +12,7 @@ public static class HttpClientExtensions
     {
         try
         {
-            await client.PostAsJsonAsync(webhook, new Dictionary<string, string>()
+            HttpResponseMessage response = await client.PostAsJsonAsync(webhook, new Dictionary<string, string>()
             {
                 {
                     "username", "qBittorrentRelay"
@@ -24,6 +24,8 @@ public static class HttpClientExtensions
                     "content", message
                 }
             });
+
+            response.EnsureSuccessStatusCode();
         }
         catch(Exception ex) 
         {
