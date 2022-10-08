@@ -15,6 +15,12 @@ public static class HttpClientExtensions
             await client.PostAsJsonAsync(webhook, new Dictionary<string, string>()
             {
                 {
+                    "username", "qBittorrentRelay"
+                },
+                {
+                    "avatar_url", "https://pics.computerbase.de/6/4/9/3/8/logo-256.png"
+                },
+                {
                     "content", message
                 }
             });
