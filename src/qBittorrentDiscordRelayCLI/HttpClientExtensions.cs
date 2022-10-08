@@ -25,6 +25,9 @@ public static class HttpClientExtensions
                 }
             });
         }
-        catch(Exception) { }
+        catch(Exception ex) 
+        {
+            Console.WriteLine(ex.Message);
+        }
     }
 }
