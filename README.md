@@ -19,6 +19,6 @@ This program will send a message to a discord server whenever a torrent finishes
 
 5. Scroll to the bottom and enable "Run external program on torrent completion".
 
-6. Copy and paste `.\qBittorrentDiscordRelay.exe "%N has finished downloading."` into the text field.
+6. Copy and paste `qBittorrentDiscordRelay.exe "%N has finished downloading."` into the text field.
 
 7. Try torrenting something small and quick to verify that qBittorrent is setup correctly.
